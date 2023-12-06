@@ -16,16 +16,16 @@ def _make_comparison(result_dict: dict[str, NDArray[np.int32]], func: Callable) 
     return result
 
 
-def pairwice_rand_score(result_dict: dict[str, NDArray[np.int32]]) -> NDArray[np.float64]:
+def pairwics_rand_score(result_dict: dict[str, NDArray[np.int32]]) -> NDArray[np.float64]:
     result = _make_comparison(result_dict, rand_score)
     return pd.DataFrame(result, index=result_dict.keys(), columns=result_dict.keys())
 
 
-def pairwice_adjusted_rand_score(result_dict: dict[str, NDArray[np.int32]]) -> NDArray[np.float64]:
+def pairwise_adjusted_rand_score(result_dict: dict[str, NDArray[np.int32]]) -> NDArray[np.float64]:
     result = _make_comparison(result_dict, adjusted_rand_score)
     return pd.DataFrame(result, index=result_dict.keys(), columns=result_dict.keys())
 
 
-def pairwice_ami_score(result_dict: dict[str, NDArray[np.int32]]) -> NDArray[np.float64]:
+def pairwise_ami_score(result_dict: dict[str, NDArray[np.int32]]) -> NDArray[np.float64]:
     result = _make_comparison(result_dict, adjusted_mutual_info_score)
     return pd.DataFrame(result, index=result_dict.keys(), columns=result_dict.keys())
