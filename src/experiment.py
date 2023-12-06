@@ -8,7 +8,7 @@ from numpy.typing import NDArray
 from tabulate import tabulate
 
 from src.clustering import get_agglomerative, get_em, get_kmeans, get_spectral
-from src.compare import pairwice_rand_score
+from src.compare import pairwice_ami_score, pairwice_rand_score
 
 
 def experiment(data: pd.DataFrame, clusters_list: list[int], data_name: str,
@@ -51,9 +51,15 @@ def print_meteric(cluster_results_dict: dict, modularity_cluster_dict: dict) -> 
     for num_clusters, result_dict in cluster_results_dict.items():
         print(f'Num Clusters {num_clusters}')
 
+        print('Pairwice RI Score')
         table = pairwice_rand_score(result_dict)
         print(tabulate(table, headers='keys', tablefmt='psql'))
 
+        print('Pairwice AMI Score')
+        table = pairwice_ami_score(result_dict)
+        print(tabulate(table, headers='keys', tablefmt='psql'))
+
+        print('Modularity')
         modularity = modularity_cluster_dict[num_clusters]
         table = pd.DataFrame(modularity, index=['Modularity'], columns=result_dict.keys())
         print(tabulate(table, headers='keys', tablefmt='psql'))
