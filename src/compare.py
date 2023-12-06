@@ -16,7 +16,7 @@ def _make_comparison(result_dict: dict[str, NDArray[np.int32]], func: Callable) 
     return result
 
 
-def pairwics_rand_score(result_dict: dict[str, NDArray[np.int32]]) -> NDArray[np.float64]:
+def pairwise_rand_score(result_dict: dict[str, NDArray[np.int32]]) -> NDArray[np.float64]:
     result = _make_comparison(result_dict, rand_score)
     return pd.DataFrame(result, index=result_dict.keys(), columns=result_dict.keys())
 
