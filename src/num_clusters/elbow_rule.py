@@ -34,7 +34,7 @@ def get_best_index_by_inertia(inertias: list[float], cluster_range: NDArray[np.i
     return best_index
 
 
-def elbow_rule(data: NDArray[np.float64], max_cluster: int, find_best: bool = False) -> plt.Figure:
+def elbow_rule(data: NDArray[np.float64], max_cluster: int, find_best: bool = False) -> None:
     cluster_range = np.arange(start=1, stop=max_cluster)
     best_index = None
 
@@ -55,4 +55,4 @@ def elbow_rule(data: NDArray[np.float64], max_cluster: int, find_best: bool = Fa
     plt.xlabel('Number of clusters')
     plt.ylabel('Inertia')
     plt.title('The Elbow Method')
-    return figure
+    plt.show()
