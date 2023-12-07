@@ -1,4 +1,5 @@
 import numpy as np
+from lkmeans import LKMeans
 from numpy.typing import NDArray
 from sklearn.cluster import AgglomerativeClustering, KMeans, SpectralClustering
 from sklearn.mixture import GaussianMixture
@@ -29,4 +30,11 @@ def get_spectral(n_clusters: int,) -> SpectralClustering:
 def get_em(n_clusters: int) -> GaussianMixture:
     return GaussianMixture(
         n_components=n_clusters,
+    )
+
+
+def get_lkmeans(n_clusters: int, p: float) -> LKMeans:
+    return LKMeans(
+        n_clusters=n_clusters,
+        p = p
     )
