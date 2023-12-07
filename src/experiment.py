@@ -8,7 +8,8 @@ from numpy.typing import NDArray
 from sklearn.metrics import silhouette_score
 from tabulate import tabulate
 
-from src.clustering import get_agglomerative, get_em, get_kmeans, get_spectral
+from src.clustering import (get_agglomerative, get_em, get_kmeans, get_lkmeans,
+                            get_spectral)
 from src.compare import pairwise_ami_score, pairwise_rand_score
 
 
@@ -26,6 +27,8 @@ def experiment(data: pd.DataFrame, clusters_list: list[int], data_name: str,
         ('KMeans', get_kmeans),
         ('Spectral', get_spectral), # Similarity matrix must be passed to fit
         ('EM Gaussian Mixture', get_em),
+        ('LKmeans (4)', partial(get_lkmeans, p=4)),
+        ('LKMeans (0.5)', partial(get_lkmeans, p=0.5))
     ]
 
     cluster_results_dict = {}
@@ -39,7 +42,13 @@ def experiment(data: pd.DataFrame, clusters_list: list[int], data_name: str,
 
         for clustering_name, clustering_getter in get_clustering_named_list:
             clustering = clustering_getter(n_clusters=n_clusters)
-            result = clustering.fit_predict(data) if clustering_name != 'Spectral' else clustering.fit_predict(similarity_matrix)
+            if clustering_name == 'Spectral':
+                result = clustering.fit_predict(similarity_matrix)
+            elif 'LKmeans'.lower() in clustering_name.lower():
+                result = clustering.fit_predict(data.to_numpy())
+                result = np.array(result)
+            else:
+                result = clustering.fit_predict(data)
             result_dict[clustering_name] = result
 
             modularity = nx.community.modularity(graph, convert_clustering_result_to_groups(result))
@@ -69,7 +78,6 @@ def print_meteric(cluster_results_dict: dict, modularity_cluster_dict: dict, sil
         modularity = modularity_cluster_dict[num_clusters]
         table = pd.DataFrame(modularity, index=['Modularity'], columns=result_dict.keys())
         print(tabulate(table, headers='keys', tablefmt='psql'))
-
 
         print('Silhouette')
         silhouette = silhouette_cluster_dict[num_clusters]

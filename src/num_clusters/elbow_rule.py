@@ -2,6 +2,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from numpy.typing import NDArray
 from sklearn.cluster import KMeans
+from yellowbrick.cluster.elbow import kelbow_visualizer
 
 
 def unit_vector(vector: NDArray[np.float64]) -> NDArray[np.float64]:
@@ -56,3 +57,9 @@ def elbow_rule(data: NDArray[np.float64], max_cluster: int, find_best: bool = Fa
     plt.ylabel('Inertia')
     plt.title('The Elbow Method')
     plt.show()
+
+
+def automatic_elbow_rule(data: NDArray[np.float64], max_cluster: int) -> None:
+    kelbow_visualizer(KMeans(random_state=4, n_init='auto'), data, k=(1,max_cluster))
+    plt.show()
+    return
