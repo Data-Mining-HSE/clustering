@@ -5,6 +5,7 @@ import networkx as nx
 import numpy as np
 import pandas as pd
 from numpy.typing import NDArray
+from sklearn.metrics import silhouette_score
 from tabulate import tabulate
 
 from src.clustering import get_agglomerative, get_em, get_kmeans, get_spectral
@@ -29,10 +30,12 @@ def experiment(data: pd.DataFrame, clusters_list: list[int], data_name: str,
 
     cluster_results_dict = {}
     modularity_cluster_dict = {}
+    silhouette_cluster_dict = {}
 
     for n_clusters in clusters_list:
         result_dict = {}
         modularity_dict = {}
+        silhouette_dict = {}
 
         for clustering_name, clustering_getter in get_clustering_named_list:
             clustering = clustering_getter(n_clusters=n_clusters)
@@ -42,12 +45,15 @@ def experiment(data: pd.DataFrame, clusters_list: list[int], data_name: str,
             modularity = nx.community.modularity(graph, convert_clustering_result_to_groups(result))
             modularity_dict[clustering_name] = modularity
 
+            silhouette_dict[clustering_name] = silhouette_score(data, result)
+
         cluster_results_dict[n_clusters] = result_dict
         modularity_cluster_dict[n_clusters] = modularity_dict
-    print_meteric(cluster_results_dict, modularity_cluster_dict)
+        silhouette_cluster_dict[n_clusters] = silhouette_dict
+    print_meteric(cluster_results_dict, modularity_cluster_dict, silhouette_cluster_dict)
 
 
-def print_meteric(cluster_results_dict: dict, modularity_cluster_dict: dict) -> None:
+def print_meteric(cluster_results_dict: dict, modularity_cluster_dict: dict, silhouette_cluster_dict: dict) -> None:
     for num_clusters, result_dict in cluster_results_dict.items():
         print(f'Num Clusters {num_clusters}')
 
@@ -62,6 +68,12 @@ def print_meteric(cluster_results_dict: dict, modularity_cluster_dict: dict) -> 
         print('Modularity')
         modularity = modularity_cluster_dict[num_clusters]
         table = pd.DataFrame(modularity, index=['Modularity'], columns=result_dict.keys())
+        print(tabulate(table, headers='keys', tablefmt='psql'))
+
+
+        print('Silhouette')
+        silhouette = silhouette_cluster_dict[num_clusters]
+        table = pd.DataFrame(silhouette, index=['Silhouette'], columns=result_dict.keys())
         print(tabulate(table, headers='keys', tablefmt='psql'))
         print('\n')
 
